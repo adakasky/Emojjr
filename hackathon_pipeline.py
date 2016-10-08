@@ -1,11 +1,8 @@
 from vaderSentiment.vaderSentiment import sentiment as vaderSentiment
-from nltk.internals import find_jars_within_path
-import time
 import nltk
 from nltk.tokenize import word_tokenize
 import re
 import epd
-from nltk.tag import StanfordPOSTagger
 import numpy as np
 
 tags = set(["NN", "JJR", "JJS" "NNS", "NNP", "NNPS" "JJ", "RB", "RBR", "RBS", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ"])
@@ -186,49 +183,56 @@ u'\ud83c\udde8\ud83c\udde6': [30, 15, 25, 0, 20],
 u'\ud83c\uddec\ud83c\udde7': [30, 15, -35, 0, 15],
 u'\ud83c\uddfa\ud83c\uddf8': [50, 50, 45, 50, 38]}
 
-with open("imagenetcorp.txt", "r") as corpus:
-	with open("out.txt", "w") as output:
-		content = corpus.read()
-		sentences = re.split("[?\.!]", content)
-		#for sentence in sentences:
-		for i in range(0, 5):
-			sentence = sentences[i]
-			vs = vaderSentiment(sentence)
-			#print "\t" + str(vs)
-			text = word_tokenize(sentence)
-			pos_tags = nltk.pos_tag(text)
-			myEpd = epd.epd(0, 1)
-			emojipos = []
-			for sample in range(0, int(np.random.rand() * 2 * len(text))):
-				emojipos+=[int(myEpd.getPosition(text))]
-			righttags = []
-			for position in emojipos:
-				if getTag(pos_tags, position) == True:
-					righttags+=[position]
-			score = vs["compound"] * 50
-			final_emojis = []
-			emojis = []#index to list of unicode values 
-			for k,v in emoji.items(): 
-				for val in v:
-					if val >= score - 15 and val <= score + 15:
-						emojis+= [k]
-			for index in righttags:
-				sample = int(np.floor(np.random.rand() *len(emojis)))
-				choice = emojis[sample]
-				final_emojis+= [(index, choice)]
-			text = [unicode(t, "utf-8") for t in text]
-			for index,e in final_emojis:
-				if index == 0:
-					samp = np.random.rand()
-					if samp > .5:
-						text[index] = text[index] + e
+def func(inFile, outFile="out.txt", std, emojificationParam):
+
+	with open(inFile, "r") as corpus:
+		with open(outFile, "w") as output:
+			content = corpus.read()
+			sentences = re.split("[?\.!]", content)
+			#for sentence in sentences:
+			for i in range(0, 5):
+				sentence = sentences[i]
+				vs = vaderSentiment(sentence)
+				#print "\t" + str(vs)
+				text = word_tokenize(sentence)
+				pos_tags = nltk.pos_tag(text)
+				myEpd = epd.epd(0, std)
+				emojipos = []
+				for sample in range(0, int(np.random.rand() * emojificationParam * len(text))):
+					emojipos+=[int(myEpd.getPosition(text))]
+				righttags = []
+				for position in emojipos:
+					if getTag(pos_tags, position) == True:
+						righttags+=[position]
+				score = vs["compound"] * 50
+				final_emojis = []
+				emojis = []#index to list of unicode values 
+				for k,v in emoji.items(): 
+					for val in v:
+						if val >= score - 15 and val <= score + 15:
+							emojis+= [k]
+				for index in righttags:
+					sample = int(np.floor(np.random.rand() *len(emojis)))
+					choice = emojis[sample]
+					final_emojis+= [(index, choice)]
+				text = [unicode(t, "utf-8") for t in text]
+				for index,e in final_emojis:
+					if index == 0:
+						samp = np.random.rand()
+						if samp > .5:
+							text[index] = text[index] + e
+						else:
+							text[index] = e+  text[index]
 					else:
-						text[index] = e+  text[index]
-				else:
-					text[index] = text[index] + e
-			output.write(" ".join(text).encode("utf-8"))
-			print " ".join(text)
+						text[index] = text[index] + e
+				output.write(" ".join(text).encode("utf-8"))
+				print " ".join(text)
 
 
-corpus.close()
-output.close()
+	corpus.close()
+	output.close()
+
+if __name__ == '__main__':
+
+	func("imagenetcorp.txt", "out.txt", 2, 2)
+
