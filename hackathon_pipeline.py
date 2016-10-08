@@ -183,14 +183,14 @@ u'\ud83c\udde8\ud83c\udde6': [30, 15, 25, 0, 20],
 u'\ud83c\uddec\ud83c\udde7': [30, 15, -35, 0, 15],
 u'\ud83c\uddfa\ud83c\uddf8': [50, 50, 45, 50, 38]}
 
-def func(inFile, outFile="out.txt", std, emojificationParam):
+def func(std, emojificationParam, inFile, outFile="out.txt"):
 
 	with open(inFile, "r") as corpus:
 		with open(outFile, "w") as output:
 			content = corpus.read()
 			sentences = re.split("[?\.!]", content)
-			#for sentence in sentences:
-			for i in range(0, 5):
+			for sentence in sentences:
+			#for i in range(0, 5):
 				sentence = sentences[i]
 				vs = vaderSentiment(sentence)
 				#print "\t" + str(vs)
@@ -234,5 +234,4 @@ def func(inFile, outFile="out.txt", std, emojificationParam):
 
 if __name__ == '__main__':
 
-	func("imagenetcorp.txt", "out.txt", 2, 2)
-
+	func(2, 2, "imagenetcorp.txt")
