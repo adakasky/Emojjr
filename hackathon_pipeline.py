@@ -13,6 +13,8 @@ def getTag(lis, index, returnType=False):
 		if index == None:
 			return False
 		#index = int(index - 1)
+		if index >= len(lis):
+			return False
 		if lis[index][1] in tags:
 			return True
 		else:
@@ -199,7 +201,8 @@ def func(std, emojificationParam, inFile, outFile="out.txt"):
 				myEpd = epd.epd(0, std)
 				emojipos = []
 				for sample in range(0, int(np.random.rand() * emojificationParam * len(text))):
-					emojipos+=[int(myEpd.getPosition(text))]
+					if myEpd.getPosition(text) != None:
+						emojipos+=[int(myEpd.getPosition(text))]
 				righttags = []
 				for position in emojipos:
 					if getTag(pos_tags, position) == True:
