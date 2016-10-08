@@ -1,1 +1,0 @@
-﻿We🍻🌝🐦 trained🔫 a large , deep convolutional neural network to classify️⚽😭 the 12 million high-resolution😎🌵🚗 images in the ImageNet LSVRC-2010 contest into the 1000 different classesOn the test🙅 data , we achieved top-1 and top-5 error🏳 rates of 375 %😈 and 170 % which is considerably better than the previous state-of-the-art

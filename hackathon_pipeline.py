@@ -191,7 +191,7 @@ def func(std, emojificationParam, inFile, outFile="out.txt"):
 			sentences = re.split("[?\.!]", content)
 			for sentence in sentences:
 			#for i in range(0, 5):
-				sentence = sentences[i]
+				#sentence = sentences[i]
 				vs = vaderSentiment(sentence)
 				#print "\t" + str(vs)
 				text = word_tokenize(sentence)
@@ -234,4 +234,4 @@ def func(std, emojificationParam, inFile, outFile="out.txt"):
 
 if __name__ == '__main__':
 
-	func(2, 2, "imagenetcorp.txt")
+	func(2, 2, "test.txt")
