@@ -1,5 +1,5 @@
 from vaderSentiment.vaderSentiment import sentiment as vaderSentiment
-import nltk
+from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import re
 import epd
@@ -185,59 +185,58 @@ u'\ud83c\udde8\ud83c\udde6': [30, 15, 25, 0, 20],
 u'\ud83c\uddec\ud83c\udde7': [30, 15, -35, 0, 15],
 u'\ud83c\uddfa\ud83c\uddf8': [50, 50, 45, 50, 38]}
 
-def func(std, emojificationParam, inFile, outFile="out.txt"):
-
-	with open(inFile, "r") as corpus:
-		with open(outFile, "w") as output:
-			content = corpus.read()
-			sentences = re.split("[?\.!]", content)
-			for sentence in sentences:
-			#for i in range(0, 5):
-				#sentence = sentences[i]
-				vs = vaderSentiment(sentence)
-				#print "\t" + str(vs)
-				text = word_tokenize(sentence)
-				pos_tags = nltk.pos_tag(text)
-				myEpd = epd.epd(0, std)
-				emojipos = []
-				for sample in range(0, int(np.random.rand() * emojificationParam * len(text))):
-					a = myEpd.getPosition(text)
-					if not a is None:
-						emojipos+=[int(a)]
-				righttags = []
-				for position in emojipos:
-					if getTag(pos_tags, position) == True:
-						righttags+=[position]
-				score = vs["compound"] * 50
-				final_emojis = []
-				emojis = []#index to list of unicode values
-				for k,v in emoji.items():
-					for val in v:
-						if val >= score - 15 and val <= score + 15:
-							emojis+= [k]
-				for index in righttags:
-					sample = int(np.floor(np.random.rand() *len(emojis)))
-					choice = emojis[sample]
-					final_emojis+= [(index, choice)]
-				text = [unicode(t, "utf-8") for t in text]
-				for index,e in final_emojis:
-					if index == 0:
-						samp = np.random.rand()
-						if samp > .5:
-							text[index] = text[index] + e
-						else:
-							text[index] = e+  text[index]
-					else:
-						text[index] = text[index] + e
-				s = " ".join(text)
-				if len(s) > 2:
-					output.write((s + unicode(". ")).encode("utf-8"))
-					print s.encode("utf-8")
-
-
-	corpus.close()
+def func(std, emojificationParam, text, outFile="out.txt"):
+	if text[-4:] == '.txt':
+		f = open(text, "r")
+		content = f.read()
+	else:
+		content = text
+	output = open(outFile, "w")
+	sentences = re.split("[?\.!]", content)
+	for sentence in sentences:
+		vs = vaderSentiment(sentence)
+		text = word_tokenize(sentence)
+		pos_tags = pos_tag(text)
+		myEpd = epd.epd(0, std)
+		emojipos = []
+		for sample in range(0, int(np.random.rand() * emojificationParam * len(text))):
+			a = myEpd.getPosition(text)
+			if not a is None:
+				emojipos+=[int(a)]
+		righttags = []
+		for position in emojipos:
+			if getTag(pos_tags, position) == True:
+				if righttags.count(position) < 3:
+					righttags+=[position]
+		score = vs["compound"] * 50
+		final_emojis = []
+		emojis = []#index to list of unicode values
+		for k,v in emoji.items():
+			for val in v:
+				if val >= score - 5 and val <= score + 5:
+					emojis+= [k]
+		for index in righttags:
+			sample = int(np.floor(np.random.rand() *len(emojis)))
+			choice = emojis[sample]
+			final_emojis+= [(index, choice)]
+		text = [unicode(t, "utf-8") for t in text]
+		for index,e in final_emojis:
+			if index == 0:
+				samp = np.random.rand()
+				if samp > .5:
+					text[index] = text[index] + e
+				else:
+					text[index] = e+  text[index]
+			else:
+				text[index] = text[index] + e
+		s = " ".join(text)
+		if len(s) > 2:
+			output.write((s + unicode(". ")).encode("utf-8"))
+			print (s + unicode(". ")).encode("utf-8")
 	output.close()
 
 if __name__ == '__main__':
 
-	func(2, 2, "test.txt")
+	txt = raw_input("Enter some text: ")
+
+	func(3, 2, txt)
