@@ -210,8 +210,8 @@ def func(std, emojificationParam, inFile, outFile="out.txt"):
 						righttags+=[position]
 				score = vs["compound"] * 50
 				final_emojis = []
-				emojis = []#index to list of unicode values 
-				for k,v in emoji.items(): 
+				emojis = []#index to list of unicode values
+				for k,v in emoji.items():
 					for val in v:
 						if val >= score - 15 and val <= score + 15:
 							emojis+= [k]
@@ -232,7 +232,7 @@ def func(std, emojificationParam, inFile, outFile="out.txt"):
 				s = " ".join(text)
 				if len(s) > 2:
 					output.write((s + unicode(". ")).encode("utf-8"))
-					print s
+					print s.encode("utf-8")
 
 
 	corpus.close()
